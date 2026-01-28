@@ -1,4 +1,5 @@
 import axios from "axios";
+import logger from "../utils/logger.js";
 
 const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
@@ -22,8 +23,8 @@ export async function sendWhatsAppMessage(to, message) {
       },
     });
 
-    console.log("Message sent:", response.data);
+    logger.info("Message sent:", response.data);
   } catch (error) {
-    console.error("Error sending message:", error.response?.data || error.message);
+    logger.error("Error sending message:", error.response?.data || error.message);
   }
 }

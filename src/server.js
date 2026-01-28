@@ -1,21 +1,29 @@
+import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
 import app from "./app.js";
-import logger from "./utils/logger.js";
 
-dotenv.config();
+dotenv.config(); // Load .env variables at the very top
 
-const requiredEnvVars = ['MONGO_URI', 'WHATSAPP_ACCESS_TOKEN', 'WHATSAPP_PHONE_NUMBER_ID', 'VERIFY_TOKEN'];
-for (const varName of requiredEnvVars) {
-  if (!process.env[varName]) {
-    throw new Error(`Missing required environment variable: ${varName}`);
-  }
+// 1️⃣ Get environment variables
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI;
+
+// 2️⃣ Make sure MONGO_URI exists
+if (!MONGO_URI) {
+  throw new Error("Missing required environment variable: MONGO_URI");
 }
 
-await connectDB();
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  logger.info(`🏥 Clinic bot running on port ${PORT}`);
-});
+// 3️⃣ Connect to MongoDB
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log(`✅ MongoDB connected`);
+    
+    // 4️⃣ Start Express server after DB connection
+    app.listen(PORT, () => {
+      console.log(`🏥 Clinic bot running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err);
+  });

@@ -1,8 +1,8 @@
 import React from "react";
-import Patients from "./components/Patients";
-import Doctors from "./components/Doctors";
-import Appointments from "./components/Appointments";
-import LabResults from "./components/LabResults";
+import Patients from "./Components/Patients";
+import Doctors from "./Components/Doctors";
+import Appointments from "./Components/Appointments";
+import LabResults from "./Components/LabResults";
 
 function App() {
   return (

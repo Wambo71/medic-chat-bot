@@ -28,6 +28,7 @@
     "express-rate-limit": "^8.2.1",
     "mongoose": "^9.1.5",
     "node-cron": "^4.2.1",
+    "socket.io": "^4.8.3",
     "winston": "^3.19.0"
   },
   "devDependencies": {
@@ -36,7 +37,9 @@
     "supertest": "^7.2.2"
   },
   "jest": {
-    "extensionsToTreatAsEsm": [".js"],
+    "extensionsToTreatAsEsm": [
+      ".js"
+    ],
     "transform": {}
   }
 }

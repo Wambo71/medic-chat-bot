@@ -1,29 +1,49 @@
-import mongoose from "mongoose";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 import dotenv from "dotenv";
-import app from "./app.js";
+import connectDB from "./config/db.js";
 
-dotenv.config(); // Load .env variables at the very top
+dotenv.config();
+connectDB();
 
-// 1️⃣ Get environment variables
-const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI;
+const app = express();
+app.use(express.json());
 
-// 2️⃣ Make sure MONGO_URI exists
-if (!MONGO_URI) {
-  throw new Error("Missing required environment variable: MONGO_URI");
-}
+const server = http.createServer(app);
 
-// 3️⃣ Connect to MongoDB
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log(`✅ MongoDB connected`);
-    
-    // 4️⃣ Start Express server after DB connection
-    app.listen(PORT, () => {
-      console.log(`🏥 Clinic bot running on port ${PORT}`);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
+// SOCKET CONNECTION
+io.on("connection", (socket) => {
+  console.log("🟢 User connected:", socket.id);
+
+  socket.on("sendMessage", (data) => {
+    console.log("📩 Message received:", data);
+
+    // Send message to all clients
+    io.emit("receiveMessage", {
+      text: data.text,
+      sender: data.sender
     });
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err);
   });
+
+  socket.on("disconnect", () => {
+    console.log("🔴 User disconnected:", socket.id);
+  });
+});
+
+app.get("/", (req, res) => {
+  res.send("Hospital Chat Bot API running...");
+});
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`🏥 Server running on port ${PORT}`);
+});
